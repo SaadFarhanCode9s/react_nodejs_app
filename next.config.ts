@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
     NEXT_JS_ENV: "development",
     PRODUCT_NAME: "Green Herbals",
     API_URL: "http://localhost:9002",
-    SIGNUP_URL: "/auth/signup"
-
+    SIGNUP_URL: "/auth/signup",
+    SIGNIN_URL: "/auth/signin",
   }
 };
 

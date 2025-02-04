@@ -7,6 +7,7 @@ var router = express.Router();
 let authController = require("../controller/index");
 
 router.post("/signup", authController.auth.signup);
+router.post("/signin", authController.auth.signin);
 
 
 

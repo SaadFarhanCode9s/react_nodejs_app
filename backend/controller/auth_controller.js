@@ -15,6 +15,15 @@ module.exports.signup = async function (req, res) {
   // }
 
 
+};
+
+module.exports.signin = async function (req, res) {
+
+
+  return res.json({
+    success: true,
+    data: "Response from Auth Controller singin- "+req.body.username,
+  });
 
 
 };
