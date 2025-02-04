@@ -1,13 +1,14 @@
 
 "use client"
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 
 
-let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 
 type SIGNUP_FIELDS = {
     username: string,
@@ -17,23 +18,45 @@ type SIGNUP_FIELDS = {
 };
 
 
+// For reference only
+// toast.info("Lorem ipsum dolor"); // same as toast(message, {type: "info"});
+// toast.error("Lorem ipsum dolor")
+// toast.success("Lorem ipsum dolor")
+// toast.warn("Lorem ipsum dolor")
 
 
 export default function SignUp() {
+
+    //Application Constants
+    const BACKEND_API = process.env.API_URL ? process.env.API_URL : 'localhost';
+
+    const SIGNUP_URL = process.env.SIGNUP_URL ? process.env.SIGNUP_URL : '/signup';
+
+
+    // Application Regex Constants
+
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const usernameMaxLength = 25;
+    const usernameMinLength = 5;
+
+
+
+    //State Variables
 
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('')
 
-    const [errors, setErrors] = useState<any>();
+    // const [errors, setErrors] = useState<any>({ "password": "Does not match", "username": "too short" });
 
     const [submitEnabled, setSubmitEnabled] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [passwordvisible, setPasswordvisible] = useState<boolean>(false);
     const [cPasswordVisible, setcPasswordVisible] = useState<boolean>(false);
-    const notify = () => toast("Wow so easy!");
-  
+    // const notify = () => toast("Wow so easy!");
+
+
 
 
     useEffect(() => {
@@ -41,14 +64,9 @@ export default function SignUp() {
             username && username != '' &&
             email && email != '' &&
             password && password != '' &&
-            confirmPassword && confirmPassword != '' &&
-            confirmPassword === password
-
-
+            confirmPassword && confirmPassword != ''
         ) {
             setSubmitEnabled(true);
-
-
         } else {
             setSubmitEnabled(false);
         }
@@ -60,20 +78,48 @@ export default function SignUp() {
 
 
     const onSubmit = () => {
-        if (regex.test(email)) {
-            alert("Valid email address");
 
-        } else {
-            alert("Invalid email address");
+        //Email Validation
+        if (!regex.test(email)) {
+            toast.error("Invalid email address");
+            return
         }
+
+        //Username Validation
+        if (username.length > usernameMaxLength) {
+            toast.error(`Username too long! Maximum allowed length is ${usernameMaxLength}`);
+            return
+        }
+        else if (username.length < usernameMinLength) {
+            toast.error(`Username too short! Minimum allowed length is ${usernameMinLength}`);
+            return
+        }
+
+        //Password Validation
+        if (confirmPassword !== password) {
+            toast.error("Password and Confirm Password does not match");
+            return
+        }
+
+
+        axios.post(BACKEND_API + SIGNUP_URL)
+            .then(response => {
+                // Handle the success response
+                console.error(response.data); // Prints "Hello, world!"
+            })
+            .catch(error => {
+                // Handle the error response
+                console.error(error);
+            });
+
     };
 
     return (
 
         <div className="text-center pt-[15px]">
 
-            <button onClick={notify}>Notify!</button>
-            
+            {/* <button onClick={notify}>Notify!</button> */}
+
 
 
             <h5 className="font-[poppinsmedium] text-[16px] leading-[24px] text-white">Already have an account?
@@ -83,12 +129,17 @@ export default function SignUp() {
             </h5>
 
 
-
+            {/* Signup Form Starts */}
             <div className="fields pt-[50px]">
+
+
+                {/* Username Field Starts */}
                 <div className="signup__field">
 
                     <input className="signup__input" type="text" name="username" id="username" required maxLength={25} onChange={(e) => setUsername(e.target.value)} />
-                    <label className="signup__label" >Username</label>
+                    <label className="signup__label" >
+                        Username
+                    </label>
 
 
                     <div className="absolute right-4">
@@ -102,6 +153,13 @@ export default function SignUp() {
 
                 </div>
 
+
+                {/* Username Field Ends */}
+
+
+
+
+                {/* Email Field Starts */}
                 <div className="signup__field">
 
                     <input className="signup__input" type="text" name="email" id="email" required maxLength={25} onChange={(e) => setEmail(e.target.value)} />
@@ -152,7 +210,7 @@ export default function SignUp() {
                                 <svg width="22px" height="30px" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"
                                     className="mx-[10px] cursor-pointer" onClick={(e) => setPasswordvisible(!passwordvisible)}>
 
-                                    <g fill="none" fill-rule="evenodd" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 4)">
+                                    <g fill="none" fillRule="evenodd" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" transform="translate(2 4)">
 
                                         <path d="M4.21098664 2.25927021C2.72674608 3.17424129 1.32308387 4.58781789 0 6.5 2.53705308 10.1666667 5.37038642 12 8.5 12 9.9230893 12 11.2849174 11.6209257 12.5854843 10.8627772M14.173426 9.72269094C15.1532781 8.88149971 16.0954695 7.8072694 17 6.5 14.4629469 2.83333333 11.6296136 1 8.5 1 7.66950473 1 6.85987336 1.1291024 6.0711059 1.38730721" />
 
@@ -217,7 +275,7 @@ export default function SignUp() {
                                 <svg width="22px" height="30px" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"
                                     className="mx-[10px] cursor-pointer" onClick={(e) => setcPasswordVisible(!cPasswordVisible)}>
 
-                                    <g fill="none" fill-rule="evenodd" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 4)">
+                                    <g fill="none" fillRule="evenodd" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" transform="translate(2 4)">
 
                                         <path d="M4.21098664 2.25927021C2.72674608 3.17424129 1.32308387 4.58781789 0 6.5 2.53705308 10.1666667 5.37038642 12 8.5 12 9.9230893 12 11.2849174 11.6209257 12.5854843 10.8627772M14.173426 9.72269094C15.1532781 8.88149971 16.0954695 7.8072694 17 6.5 14.4629469 2.83333333 11.6296136 1 8.5 1 7.66950473 1 6.85987336 1.1291024 6.0711059 1.38730721" />
 
