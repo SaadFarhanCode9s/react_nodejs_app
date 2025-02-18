@@ -83,7 +83,7 @@ export default function SignUp() {
 
     const onSubmit = async () => {
         setIsLoading(true);
-        // debugger
+        debugger
         //Email Validation
         if (!regex.test(email)) {
             toast.error("Invalid email address");
