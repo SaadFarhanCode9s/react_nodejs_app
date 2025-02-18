@@ -44,11 +44,11 @@ module.exports.signup = async function (payload, currentUnixTimestamp) {
 /***************************************************************/
 /***************************************************************/
 
-module.exports.signin = async function (user_id) {
+module.exports.signin = async function (payload) {
 
-    const sql = `SELECT * FROM users WHERE users.id='${user_id}'`;
+    const sql = `SELECT * FROM users WHERE users.username='${payload.username}' AND users.password='${payload.password}'`;
 
-    const queryResult = await db.runQuery(sql);
+    const queryResult = await database.runQuery(sql);
 
     return queryResult;
 };

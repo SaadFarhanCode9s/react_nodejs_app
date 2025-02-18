@@ -2,7 +2,6 @@
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { toast } from 'react-toastify';
 
@@ -15,8 +14,6 @@ type SIGNUP_FIELDS = {
 
 
 export default function SignIn() {
-
-    const router = useRouter();
 
     //Application Constants
     const BACKEND_API = process.env.API_URL ? process.env.API_URL : 'localhost';
@@ -57,70 +54,17 @@ export default function SignIn() {
     }, [username, password]);
 
 
-    const onSubmit = async () => {
-        setIsLoading(true);      
-
-        const signinData = {
-            username: username,
-            password: password
-        }
-
-        try {
-            // debugger
-            const response = await axios.post(
-                BACKEND_API + SIGNIN_URL, //This is API url e.g. http://localhost:9002/auth/signup
-                signinData, // This is your payload data e.g. {"username":"zain", "email":"s@s.com"}
-                {
-                    headers: { "Content-Type": "application/json" } // Header for content type defines the backend which format the payload is sent.
-                }
-            );
-
-            console.error("RESPONSE::::::", response)
-
-            if (response?.data?.success) {
-
-                toast.success("Signin Success!", {
-                    onClose: () => {
-                        setIsLoading(false);
-                        router.push('/dashboard')
-                    },
-                    autoClose: 3000
-                });
-
-            } else {
-
-                toast.error(response?.data?.data ? response.data.data : "Signin failed. Server Error")
-                setIsLoading(false);
-            }
-
-            //Possible repsonse from server:
-            // 1. api -> HIT -> Server 
-            //     server -> return -> response = {data : {success:true} }
-
-            // 2. api -> HIT -> Server 
-            //     server -> return -> response = "Error"
-
-        }
-        catch (e) {
-            console.error("Exception----", e); //prints Stack trace of Exception
-            toast.error("Signin failed. Server Error")
-            setIsLoading(false);
-        }
-
-        //Do something with recieved data
-
-
-        // axios.post()
-        //     .then(response => {
-        //         // Handle the success response
-        //         console.error(response.data); // Prints "Hello, world!"
-        //     })
-        //     .catch(error => {
-        //         // Handle the error response
-        //         console.error(error);
-        //     });
-
-    };
+    const onSubmit = () => {
+        axios.post(BACKEND_API + SIGNIN_URL)
+            .then(response => {
+                // Handle the success response
+                console.error(response.data); // Prints "Hello, world!"
+            })
+            .catch(error => {
+                // Handle the error response
+                console.error(error);
+            });
+    }
 
     return (
         <div className="text-center pt-[15px]">
